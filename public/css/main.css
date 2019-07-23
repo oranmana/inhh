@@ -1,0 +1,32 @@
+.list-number {
+    display: list-item;
+}
+.hidden {
+    display: none;
+}
+#contextMenu {
+    position: absolute;
+    display:none;
+    border:1px solid black;
+    font : Verdina 8pt;
+}
+.unseen {
+    display: none;
+}
+.borderless th, .borderless td {
+    border: none;
+}
+.tbl-header {
+    margin-bottom: none;
+    padding : none;
+}
+.tbl-content {
+    margin-top : 0px;
+    padding : 0px;
+    border : 0px;
+    overflow-x: auto;
+}
+.tbl-header table, .tbl-content table {
+    border : 0px;
+    margin: 0px;
+}
