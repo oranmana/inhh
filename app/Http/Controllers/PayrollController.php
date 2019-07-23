@@ -146,7 +146,7 @@ class PayrollController extends Controller
                 }
             }
             if ($sum->otamt) {
-                PayrollItem::insert(['payemp_id'=>$PayEmp->id, 'plus'=>1, 'item_id'=>])
+                PayrollItem::insert(['payemp_id'=>$PayEmp->id, 'plus'=>1, 'item_id'=>0]);
             }
         }
     }

@@ -117,10 +117,6 @@ class PayrollEmp extends Model
         return $amt;
     }
 
-    public function getItemFullAttnAmountAttribute() {
-        $amt = 0;
-    }
-
     public function ItemAmount($item) {
         if ($item == '') {
             $item = 'wage';
