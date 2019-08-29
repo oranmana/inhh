@@ -1,0 +1,17 @@
+﻿-- packing item --
+
+select pack.id, pack.invid, pack.sapitemid, itm.itm_name as itemname, itm.itm_p2 as gradename, itm.itm_cname as productname,
+  custom.name as customsproductname,
+  size.code as packagecode, size.name as packagekg, size.des as packagenet, size.ref as packagegross,
+  box.name as packagename
+from mkpackinglist as pack
+  left join mkinvoices as inv on pack.invid = inv.id
+  left join commons as size
+    left join commons as box on box.id = size.type
+  on pack.sizeid = size.id
+  left join sap_item as itm
+    left join commons as custom on custom.id = itm.itm_uom
+    left join commons as uom on uom.id = itm.i_uom
+  on itm.itm_id = pack.sapitemid
+order by pack.id desc
+limit 0,50;

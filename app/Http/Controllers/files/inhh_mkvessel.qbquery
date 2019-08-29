@@ -1,0 +1,18 @@
+﻿select * from hctdb.tbvessel
+where vsl_agt > 0
+limit 0,20;
+
+create table hctinh.mkvessel
+select
+vsl_id as id,
+vsl_name as name,
+0 as CREATED_BY,
+now() as CREATED_AT,
+0 as UPDATED_BY,
+now() as UPDATED_AT
+from hctdb.tbvessel
+order by vsl_id
+;
+alter table hctinh.mkvessel
+modify id int unsigned auto_increment primary key,
+modify UPDATED_AT timestamp;

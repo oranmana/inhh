@@ -1,0 +1,31 @@
+﻿select * from hctdb.mk_crd
+where c_pfrom is not null
+limit 0,20;
+
+create table hctinh.mkcredit
+select
+c_id as id,
+c_dir as dirid,
+c_mode as typeid,
+c_code as code,
+c_date as opendate,
+c_benf as beneficiary,
+c_app as applicant,
+c_cons as consignee,
+c_ntf as notify,
+c_des as description,
+c_rem as remark,
+c_mark as shippingmark,
+c_bln as blnum,
+c_bank as bank,
+c_drwn as drawing,
+c_drwe as drawee,
+c_day as creditdays,
+c_pfrom as fromport,
+c_pto as toport,
+c_pdvry as placeofdelivery,
+c_bcer as certbeneficiary,
+c_coa as certcoa
+from hctdb.mk_crd
+where c_mode > 0
+order by c_id;

@@ -1,0 +1,41 @@
+﻿drop table if exists hctinh.hrlvrqs;
+
+create table hctinh.hrlvrqs (
+id int unsigned auto_increment primary key,
+empid int unsigned default 0,
+lvid int unsigned default 0,
+fdate date default null,
+num tinyint unsigned default 0,
+rem text CHARACTER SET UTF8,
+trref int unsigned default 0,
+requested_by int unsigned default 0,
+requested_at datetime default null,
+verified_by int unsigned default 0,
+verified_at datetime default null,
+approved_by int unsigned default 0,
+approved_at datetime default null,
+UPDATED_AT timestamp,
+lv_id int unsigned default 0,
+index lv_id (lv_id),
+index empid (empid),
+index lvid (lvid)
+);
+
+insert into hctinh.hrlvrqs
+select 0, lv_emp, lv_type, lv_fdate, lv_day, lv_rem, lv_ref, lv_by, lv_at,
+  if(verified_by>0, verified_by, 0), verified_at,
+    if(approved_by>0, approved_by, 0),  approved_at,
+now(), lv_id
+from hctdb.hr_leave
+  left join (
+    select id as sgid,
+      if(state=1, userid, 0) as request_by, if(state=1, timeat, null) as request_at,
+      if(state=2, userid, 0) as verified_by, if(state=2, timeat, null) as verified_at,
+      if(state=3, userid, 0) as approved_by, if(state=3, timeat, null) as approved_at
+    from (
+      select sg_rec as id, sg_mode as state, sg_by as userid, sg_at as timeat
+      from tbsign
+      where sg_file=484
+  ) as a group by sgid
+) as a on sgid = lv_id
+order by lv_at, lv_id;

@@ -1,0 +1,57 @@
+﻿delete from doc;
+alter table doc auto_increment = 1;
+insert into doc
+select
+  0 as id,
+  pp_gp as typeid,
+  pp_code as code,
+  concat('PP-', lpad(year(pp_date)-2000,2,'0'),'-', lpad(pp_code,4,'0')) as doccode,
+  pp_date as indate,
+  pp_tm as tmid,
+  pp_subj as name,
+  pp_rem as rem,
+  pp_budget as amt,
+  pp_hide as hide,
+  emp_name as docfrom,
+  'President' as docto,
+  0 as ref,
+  status as state,
+  pp_date as created_at,
+  1 as pp,
+  pp_id as oid
+from hctdb.hct_pp
+  left join hctdb.tbcommon on c_id = pp_tm
+  left join hctdb.tbuser
+    left join hctdb.tbemployee on emp_id = usr_emp
+  on usr_id = pp_by
+union
+select
+  0 as id,
+  log_doc as typeid,
+  log_code as code,
+  concat(if(tp, cref, org.c_code),'-', lpad(year(log_date)-2000,2,'0'),'-', lpad(log_code,4,'0')) as doccode,
+  log_date as indate,
+  log_tm as tmid,
+  log_subj as name,
+  log_des as rem,
+  0 as amt,
+  0 as hide,
+  log_from as docfrom,
+  log_to as docto,
+  log_pp as ref,
+  5 as state,
+  log_tstamp as created_at,
+  0 as pp,
+  log_id as oid
+from hctdb.tblog
+  left join hctdb.tbcommon as org on org.c_id = log_tm
+  left join (
+    SELECT c_id as cid, c_code as ccode, c_type as tp, c_sub, c_ref as cref
+    FROM hctdb.tbcommon WHERE c_parent=5078
+  ) as doctype on ccode = log_doc;
+where
+select *
+from hctdb.hct_pp
+  left join hctdb.tbcommon on c_id = pp_tm
+order by pp_id desc limit 0,50;
+

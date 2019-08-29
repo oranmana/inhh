@@ -13,10 +13,16 @@ class CreateHctcalTable extends Migration
      */
     public function up()
     {
-        Schema::dropIfExists('hctcal_bak');
-        Schema::rename('hctcal', 'hctcal_bak');
+        $date = date('Ymd');
+        $table = 'hctcal';
+        $bak = $table.'_'.$date;
+        
+        if (Schema::hasTable($table) ) {
+            Schema::dropIfExists($bak);
+            Schema::rename($table, $bak);
+        }
 
-        Schema::create('hctcal', function (Blueprint $table) {
+        Schema::create($table, function (Blueprint $table) {
             $table->smallIncrements('id');
             $table->date('cldate');             
             $table->unsignedTinyInteger('holiday');  // 0=workday,1=weekend,2=public holiday
@@ -31,8 +37,9 @@ class CreateHctcalTable extends Migration
             $table->string('wfo',6)->nullable();
 
             $table->unsignedSmallInteger('CREATED_BY');
+            $table->datetime('CREATED_AT');
             $table->unsignedSmallInteger('UPDATED_BY');
-            $table->timestamps();
+            $table->timestamp('UPDATED_AT');
         });
     }
 

@@ -1,0 +1,19 @@
+﻿drop table hrinterviews;
+create table hrinterviews (
+  w_id int unsigned auto_increment primary key,
+  w_appid int unsigned default 0,
+  w_empw int unsigned default 0,
+  w_s1 double(5,2) default 0.0,
+  w_s2 double(5,2) default 0.0,
+  w_s3 double(5,2) default 0.0,
+  w_s4 double(5,2) default 0.0,
+  w_s5 double(5,2) default 0.0,
+  w_accept tinyint unsigned  default 0,
+  w_rem varchar(256) default null,
+
+  CREATED_BY int unsigned default 0,
+  CREATED_AT datetime default null,
+  UPDATED_BY int unsigned default 0,
+  UPDATED_AT timestamp
+);
+

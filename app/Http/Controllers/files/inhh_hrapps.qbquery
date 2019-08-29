@@ -1,0 +1,25 @@
+﻿drop table hctinh.hrapps;
+create table hctinh.hrapps
+select ap_id as id,
+  ap_rq as rqid,
+  ap_dir as dirid,
+  ap_idate as wdate,
+  ap_mem as rem,
+  0 as score,
+  ap_state as state,
+  docs.id as docid,
+  ap_rc as rcid,
+  ap_pp as ppid,
+  ap_log as dcid,
+  ap_by as CREATED_BY,
+  ap_time as CREATED_AT,
+  ap_by as UPDATED_BY,
+  ap_time as UPDATED_AT
+from hctdb.hr_apply
+  left join hctinh.docs on if(ap_pp, pp=1 and ap_pp=oid, pp=0 and ap_log = oid)
+order by ap_id;
+
+alter table hctinh.hrapps
+modify column id int unsigned auto_increment primary key,
+modify column UPDATED_AT timestamp;
+

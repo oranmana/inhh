@@ -1,0 +1,31 @@
+﻿select * from hr_emp_train
+limit 0,50;
+
+drop table hctinh.trainings;
+
+create table hctinh.trainings (
+id int unsigned auto_increment primary key,
+train_id int unsigned default 0,
+emp_id int unsigned default 0,
+trainhours double(5,2) unsigned default 0,
+traindate date default null,
+fees double(7,2) unsigned default 0,
+expenses double(7,2) unsigned default 0,
+leaverq_id int unsigned default 0,
+CREATED_BY int unsigned default 0,
+CREATED_AT datetime default null,
+UPDATED_BY int unsigned default 0,
+UPDATED_AT timestamp,
+index train_id (train_id),
+index emp_id (emp_id),
+index leaverq_id (leaverq_id)
+);
+
+insert into hctinh.trainings
+select trs_id as id, trs_tr as train_id, trs_emp as emp_id,
+  trs_hr as trainhours, trs_date as traindate,
+  trs_fee as fees, trs_exp as expenses,
+  trs_lv as leaverq_id,
+  5,now(),5,now()
+from hr_emp_train
+order by trs_id;

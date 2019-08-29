@@ -53,9 +53,11 @@
                        
                     @can('isHR')
                         @can('isTM')
-                            <li><a href="/calendars">Org Calendar</a></li>
+                            <li><a href="calendars">Org Calendar</a></li>
                             <li><a href="/orgs">Organization Unit Management</a></li>
-                            <li><a href="/jobs">Job Title Management</a></li>
+                            <li><a href="/jobs">Job Title Management</a>
+                            <hr>
+                            </li>
                         @endcan
                         <li><a href="/hrrq">HR Request</a></li>
                         <li><a href="/hrcons">Employment Contract</a><hr></li>
@@ -63,7 +65,10 @@
                         <li><a href="/training">Training Center</a></li>
                     @endcan
                     <li><a href="/daily">Daily Attendance</a></li>
-                    <li><a href="/otorder">OT Order</a></li>
+                    <li><a href="/otorder">OT Order</a><hr></li>
+                    @can('isTM')
+                    <li><a href="/leaveitem">Leave Profile</a></li>
+                    @endcan
                     <li><a href="/leave">Leave Request</a><hr></li>
                     @can('isPayroll')
                         @can('isTM')

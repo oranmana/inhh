@@ -15,7 +15,8 @@ class EmpData extends Model
         return $this->belongsTo('App\Models\Emp','empid');
     }
     public function EdLevel() {
-        return $this->belongsTo('App\Models\Common','code')->EducationLevel();
+//        return $this->belongsTo('App\Models\Common','code')->EducationLevel();
+        return $this->belongsTo('App\Models\Common','code');
     }
     public function scopeEducation($q) {
         return $q->where('grp',1)->with(['EdLevel'=>function($q) {

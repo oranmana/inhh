@@ -13,10 +13,16 @@ class CreateEmpsTable extends Migration
      */
     public function up()
     {
-        Schema::dropIfExists('emps_bak');
-        Schema::rename('emps', 'emps_bak');
+        $TableName = 'emps';
+        $date = date('Ymd');
+        $BackUpName = $TableName . '_' . $date;
+        
+        if (Schema::hasTable($TableName)) {
+            Schema::dropIfExists($BackUpName);
+            Schema::rename($TableName, $BackUpName);
+        }
 
-        Schema::create('emps', function (Blueprint $table) {
+        Schema::create($TableName, function (Blueprint $table) {
             $table->smallIncrements('id');
             $table->unsignedMediumInteger('dirid');
             $table->string('empcode',15)->nullable();
@@ -25,7 +31,7 @@ class CreateEmpsTable extends Migration
             $table->string('name',80)->nullable();
             $table->string('thname',80)->nullable();
             $table->date('indate');
-            $table->unsignedDouble('retireage',5,2)->defult('55');
+            $table->double('retireage',5,2)->defult('55');
             $table->date('xdate')->nullable();
             $table->unsignedTinyInteger('qcode');
             $table->date('qdate')->nullable();
@@ -43,7 +49,7 @@ class CreateEmpsTable extends Migration
             $table->string('height',5)->nullable();
             $table->unsignedSmallInteger('military');
 
-            $table->string('class',5)->nullable();
+            $table->string('cls',5)->nullable();
             $table->unsignedSmallInteger('orgid');
             $table->unsignedSmallInteger('posid');
             $table->unsignedSmallInteger('jobid');
@@ -74,7 +80,9 @@ class CreateEmpsTable extends Migration
             $table->string('cardno',10)->nullable();
 
             $table->unsignedSmallInteger('CREATED_BY');
-            $table->unsignedSmallInteger('UPDATED_BY');            $table->timestamps();
+            $table->datetime('CREATED_AT');
+            $table->unsignedSmallInteger('UPDATED_BY');
+            $table->timestamp('UPDATED_AT');
         });
     }
 

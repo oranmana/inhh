@@ -1,0 +1,71 @@
+﻿drop table hctinh.assets;
+create table hctinh.assets
+select ast_id as id,
+  erp_item as itemid,
+  ast_des as des,
+  ast_brand as brand,
+  ast_model as model,
+  ast_serial as `serial`,
+  ast_datein as indate,
+  ast_doc as indoc,
+  ast_val as amount,
+  ast_dateout as dateout,
+  ast_status as state,
+  ast_loc as locationid,
+  ast_par as par,
+  erp_class as sapitemid,
+  ast_erp as sapcode,
+  ast_code as oldsap,
+  ast_pic as picid,
+  ast_tm as teamid,
+  0 as CREATED_BY,
+  now() as CREATED_AT,
+  0 as UPDATED_BY,
+  lastupdate as UPDATED_AT
+from hctdb.tbasset
+order by ast_id;
+
+alter table hctinh.assets
+modify column id int unsigned auto_increment primary key,
+add index itemid (itemid),
+add index locationid (locationid),
+add index picid (picid),
+add index teamid (teamid),
+add index sapitemid (sapitemid);
+
+
+drop table hctinh.assetlogs;
+
+create table hctinh.assetlogs;
+insert into hctinh.assetlogs
+select 0 as id,
+  ast_id as assetid,
+  lastupdate as actiondate,
+  ast_doc as actiondoc,
+  ast_status as oldstate,
+  ast_loc as oldlocationid,
+  ast_pic as oldpicid,
+  ast_tm as oldteamid,
+  ast_status as newstate,
+  ast_loc as newlocationid,
+  ast_pic as newpicid,
+  ast_tm as newteamid,
+  0 as CREATED_BY,
+  now() as CREATED_AT,
+  0 as UPDATED_BY,
+  lastupdate as UPDATED_AT
+from hctdb.tbasset
+order by ast_id;
+where ast_id = 0;
+
+alter table hctinh.assetlogs
+modify column id int unsigned auto_increment primary key,
+add index assetid (assetid),
+add index oldstate (oldstate),
+add index oldlocationid (oldlocationid),
+add index oldpicid (oldpicid),
+add index oldteamid (oldteamid),
+add index newstate (newstate),
+add index newlocationid (newlocationid),
+add index newpicid (newpicid),
+add index newteamid (newteamid);

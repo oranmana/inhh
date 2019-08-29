@@ -4,7 +4,6 @@
   <h2><a href="{{ URL::previous() }}">Employee Profile - {{ $dir->fullname }} </a></h2>
   <nav>
     <div class="nav nav-tabs" id="maintab" role="tablist">
-    @php( $tabs = array('Employment','Promotion','Attendance','Benefit','Biological','Relatives','Education','Training','Payroll'))
     @php( $tabs = array('Biological','Relatives','Education','Employment','Promotion','Benefit','Attendance','Payroll','Training'))
     @foreach($tabs as $i=>$tab)
       <a class="nav-link{!! ($i ? '' : ' active') !!}" id="{{ $tab }}-tab" data-toggle="tab" href="#{{ $tab }}" href="#tab{{ ($i+1) }}" role="tab" aria-controls="{{ $tab }}" aria-selected="{!! ($i ? 'false' : 'true') !!}">{{ $tab }}</a>

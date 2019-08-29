@@ -1,0 +1,35 @@
+﻿drop table hctinh.hrContract;
+create table hctinh.hrContract
+select rc_id as id,
+  rc_gp as grp,
+  rc_code as code,
+  rc_app as appid,
+  if (pp_id, 1, 0) as pp,
+  if (pp_id, pp_id, log_id) as docid,
+  rc_dir as dirid,
+  rc_emp as empid,
+  rc_job as jobid,
+  rc_date as indate,
+  rc_till as todate,
+  rc_cls as cls,
+  rc_pos as pos,
+  rc_pay as amt,
+  0 as clsamt,
+  0 as posamt,
+  0 as jobamt,
+  rc_sign as empsign,
+  rc_wit1 as empwit1,
+  rc_wit2 as empwit2,
+  rc_state as state,
+  rc_by as CREATED_BY,
+  rc_at as CREATED_AT,
+  0 as UPDATED_BY,
+  now() as UPDATED_AT
+from hr_recruit
+  left join hct_pp on pp_id = rc_ref
+  left join tblog on log_id = rc_ref
+order by rc_id;
+
+alter table hctinh.hrContract
+add primary key id (id),
+modify column id int unsigned auto_increment;

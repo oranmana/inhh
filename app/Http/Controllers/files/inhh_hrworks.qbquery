@@ -1,0 +1,39 @@
+﻿drop table if exists hctinh.hrworks;
+create table hctinh.hrworks (
+w_id int unsigned auto_increment primary key,
+w_empid int unsigned default 0,
+w_date date default null,
+w_workid int unsigned default 0,
+w_ot1 double(5,2) default 0,
+w_ot2 double(5,2) default 0,
+w_ot3 double(5,2) default 0,
+w_lvid int unsigned default 0,
+w_rem varchar(256) default null,
+w_state tinyint unsigned default 0,
+tin datetime default null,
+tout datetime default null,
+tin2 datetime default null,
+tout2 datetime default null,
+CREATED_BY int unsigned default 0,
+CREATED_AT datetime default null,
+UPDATED_BY int unsigned default 0,
+UPDATED_AT timestamp,
+at_id int unsigned default 0,
+index w_empid (w_empid),
+index w_date (w_date),
+index at_id (at_id)
+);
+
+select usr_id, emp_name, emp_date from tbuser left join tbemployee on usr_emp = emp_id where emp_org = 315 and emp_q = 0;
+
+insert into hctinh.hrworks
+select 0, at_emp, at_date, at_wk, at_ot1, at_ot2, at_ot3, at_lv, at_rem, at_status, at_tin, at_tout, at_ftime, at_stime,
+if(at_date > 20150630, 217, if(at_date > 20100531, 141, 5)), now(),
+if(at_date > 20150630, 217, if(at_date > 20100531, 141, 5)), now(), at_id
+from hctdb.hr_attn
+order by at_id;
+
+select * from hctinh.hrworks
+order by w_id desc
+limit 0,20;
+

@@ -1,0 +1,132 @@
+﻿drop table dirs;
+create table dirs
+select
+  dir_id as id,
+  dir_type as 'type',
+  dir_cat as sex,
+  dir_par as par,
+  dir_code as code,
+  dir_cm as grp,
+  dir_num as num,
+  dir_nm as nm,
+  dir_name as name,
+  dir_tname as tname,
+  dir_cmcty as nation,
+  dir_addr as address,
+  dir_tel as tel,
+  dir_fax as fax,
+  dir_mail as email,
+  dir_rdate as bdate,
+  if(dir_type=1, dir_app, null) as xdate,
+  dir_cap as cap,
+  dir_md as md,
+  if(dir_type>0, 0, dir_vd) as appby,
+  if(dir_type>0, null, dir_app) as appdate,
+  sup_valid as validity,
+  if(length(dir_fi)+length(dir_mm)+length(dir_sd),1,0) as iserp,
+  dir_main as erpdir,
+  dir_fi as erpfi,
+  dir_mm as erpmm,
+  dir_sd as erpsd,
+  emp_id as empid,
+  rlid as emprelative,
+  rls.c_id as empcat,
+  dir_memo as rem,
+  dir_status as state,
+  dir_eby as eby,
+  dir_ebyd as eon,
+  zdir_id as zdir,
+  dir_pic as pic,
+  dir_reg as reg,
+  dir_tax as tax,
+  dir_cty as cty
+from hctdb.tbdir
+  left join hctdb.tbemployee on (dir_type=1 and dir_vd = emp_id and dir_id = emp_dir)
+  LEFT JOIN (SELECT c_code as rlcode, c_id as rlid, c_name as rlname FROM hctdb.tbcommon WHERE c_parent = 3217) AS rl ON dir_type=1 and parid > 0 and dir_num = rlcode
+  LEFT JOIN hctdb.tbcommon AS rls ON dir_type=1 and rls.c_parent = rlid and dir_cty = rls.c_code
+  left join (select dir_id as parid, dir_vd as paremp from hctdb.tbdir where dir_type=1 and dir_vd > 0) as par on par.parid = dir_par
+where dir_name > ''
+order by emp_id;
+
+alter table dirs
+modify column id int unsigned auto_increment primary key,
+add index grp (grp),
+add index emprelative (emprelative),
+add index empcat (empcat);
+
+
+select tbdir.*
+from hctdb.tbdir
+  left join hctdb.tbemployee on (dir_type=1 and dir_vd = emp_id and dir_id = emp_dir)
+  LEFT JOIN (SELECT c_code as rlcode, c_id as rlid, c_name as rlname FROM hctdb.tbcommon WHERE c_parent = 3217) AS rl ON dir_type=1 and dir_num = rlcode
+  LEFT JOIN hctdb.tbcommon AS rls ON dir_type=1 and rls.c_parent = rlid and dir_cty = rls.c_code
+where (dir_type=1 and dir_num > 0)
+order by emp_id;
+
+select * from tbcommon where c_parent = 3217;
+
+select tbdir.*
+from hctdb.tbdir
+  left join hctdb.tbemployee on (dir_type=1 and dir_vd = emp_id and dir_id = emp_dir)
+  left join (select dir_par as parid from hctdb.tbdir where dir_type=1 group by 1) as par on par.parid = dir_par
+  LEFT JOIN (SELECT c_code as rlcode, c_id as rlid, c_name as rlname FROM hctdb.tbcommon WHERE c_parent = 3217) AS rl ON (dir_type=1 and parid > 0 and dir_num = rlcode)
+  LEFT JOIN hctdb.tbcommon AS rls ON dir_type=1 and rls.c_parent = rlid and dir_cty = rls.c_code
+where dir_name > ''
+order by emp_id;
+
+-- company
+from hctdb.tbdir
+where dir_type=0 and dir_name > '';
+-- Employee
+from hctdb.tbdir
+  left join hctdb.tbemployee as emp on (dir_vd = emp_id and dir_id = emp_dir)
+where dir_type=1 and dir_vd > 0 and emp.emp_id > 0 and dir_name > '';
+-- Relative
+insert into hctinh.dirs
+select
+  dir_id as id,
+  dir_type as 'type',
+  dir_cat as sex,
+  dir_par as par,
+  dir_code as code,
+  dir_cm as grp,
+  dir_num as num,
+  dir_nm as nm,
+  dir_name as name,
+  dir_tname as tname,
+  dir_cmcty as nation,
+  dir_addr as address,
+  dir_tel as tel,
+  dir_fax as fax,
+  dir_mail as email,
+  dir_rdate as bdate,
+  if(dir_type=1, dir_app, null) as xdate,
+  dir_cap as cap,
+  dir_md as md,
+  if(dir_type>0, 0, dir_vd) as appby,
+  if(dir_type>0, null, dir_app) as appdate,
+  sup_valid as validity,
+  if(length(dir_fi)+length(dir_mm)+length(dir_sd),1,0) as iserp,
+  dir_main as erpdir,
+  dir_fi as erpfi,
+  dir_mm as erpmm,
+  dir_sd as erpsd,
+  paremp as empid,
+  rlid as emprelative,
+  rls.c_id as empcat,
+  dir_memo as rem,
+  dir_status as state,
+  dir_eby as eby,
+  dir_ebyd as eon,
+  zdir_id as zdir,
+  dir_pic as pic,
+  dir_reg as reg,
+  dir_tax as tax,
+  dir_cty as cty,
+  5, NOW(), 5, NOW()
+from hctdb.tbdir
+  left join (select dir_id as parid, dir_vd as paremp from hctdb.tbdir where dir_vd > 0 group by 1) as paremp on dir_par = parid
+  left join (select c_code as rlcode, c_id as rlid, c_name as rlname FROM hctdb.tbcommon WHERE c_parent = 3217) AS rl
+    ON dir_num = rlcode
+  LEFT JOIN hctdb.tbcommon AS rls ON dir_type=1 and rls.c_parent = rlid and dir_cty = rls.c_code
+where dir_type=1 and dir_par > 0 and parid > 0 and dir_name > '';

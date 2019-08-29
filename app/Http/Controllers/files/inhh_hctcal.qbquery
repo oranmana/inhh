@@ -1,0 +1,28 @@
+﻿drop table if exists hctinh.hctcal;
+create table hctinh.hctcal (
+id int unsigned auto_increment primary key,
+cldate date default null,
+holiday tinyint unsigned default 0,
+rem varchar(256) default null,
+of smallint unsigned default 0,
+ofm varchar(6) default null,
+ofo varchar(6) default null,
+wf smallint unsigned default 0,
+wfm varchar(6) default null,
+wfo varchar(6) default null,
+CREATED_BY int unsigned default 0,
+CREATED_AT datetime default null,
+UPDATED_BY int unsigned default 0,
+UPDATED_AT timestamp,
+index cldate (cldate)
+);
+
+insert into hctinh.hctcal
+select cl_id, cl_date, cl_holiday, cl_des,
+  if(date_format(cl_date,'%w') in (0,6), 3683, 3678) as cl_of,
+  at_ofw, at_ofa,
+  if(date_format(cl_date,'%w') in (0), 3683, 3679) as cl_wf,
+  at_wfw, at_wfa,
+  5, now(), 5, now()
+from hctdb.hr_cal
+order by cl_date;

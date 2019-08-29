@@ -13,7 +13,7 @@
   <tbody>
   @foreach ($educations as $ed)
   <tr id="{!! $ed->did !!}">
-    <td>{!! ($ed->EdLevel ? $ed->EdLevel->name : $ed->code) !!}</td>
+    <td>{!! ($ed->EdLevel ? $ed->EdLevel->des : $ed->code) !!}</td>
     <td>{{ $ed->yr }}</td>
     <td>{!! $ed->name !!}</td>
     <td>{{ $ed->loc }}</td>

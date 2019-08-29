@@ -81,6 +81,21 @@ class Common extends Model
             ->where('group',0)
             ->orderBy('code');
     }    
+    public function scopeFamily($query) {
+        return $query->where('par',3217)
+            ->where('main',3217)
+            ->where('num','<',6)
+            ->where('off',0)
+            ->where('group',0)
+            ->orderBy('num');
+    }    
+    public function scopeRelatives($query) {
+        return $query->where('par',3217)
+            ->where('main',3217)
+            ->where('off',0)
+            ->where('group',0)
+            ->orderBy('num');
+    }    
     public function scopeTraining($query) {
         return $query->where('main',9199)
             ->where('off',0)

@@ -1,0 +1,22 @@
+﻿drop table hctinh.hrrequest;
+create table hctinh.hrrequest
+select rq_id as id,
+  date_format(rq_time,'%Y-%m-%d') as indate,
+  rq_date as rqdate,
+  rq_job as jobid,
+  docs.id as docid,
+  if(rq_gp=1,rq_ref,0) as dcid,
+  if(rq_gp=2,rq_ref,0) as ppid,
+  rq_des as des,
+  rq_state as state,
+  rq_contract as rcid,
+  rq_by as CREATED_BY,
+  rq_time as CREATED_AT,
+  rq_by as updATED_BY,
+  now() as UPDATE_AT
+from hctdb.hr_request
+  left join hctinh.docs on oid=rq_ref and docs.pp = if(rq_gp=1,0,1)
+order by rq_id;
+
+alter table hctinh.hrrequest modify column id int unsigned auto_increment primary key;
+

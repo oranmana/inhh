@@ -1,0 +1,35 @@
+﻿drop table hctinh.payrollamts;
+
+create table hctinh.payrollamts (
+  id int unsigned auto_increment primary key,
+  payemp_id int unsigned default 0,
+  plus boolean default true,
+  item_id int unsigned default 0,
+  amount double(11,2) default 0,
+  remark varchar(256) default null,
+  erp_gl varchar(10) default null,
+  CREATED_BY int unsigned default 0,
+  CREATED_AT datetime,
+  UPDATED_BY int unsigned default 0,
+  UPDATED_AT timestamp,
+  ps_id int unsigned default 0,
+  index payemp_id (payemp_id),
+  index item_id (item_id),
+  index ps_id (ps_id)
+);
+
+insert into hctinh.payrollamts
+select 0 as id, b.id as payrollemps_id, (ps_dc > 0) as plus, a.ps_exp as payrollitems_id, a.ps_amt as amount,
+  a.ps_rem as remark, exp.c_erp as erp_gl,
+  d.mp_by as CREATED_BY, d.mp_date as CREATED_AT,
+  d.mp_by as UPDATED_BY, now() as UPDATED_AT,
+  ps_id
+from hctdb.hr_emps_pays as a
+  left join tbcommon as exp on exp.c_id = a.ps_exp
+  left join hr_emps_pay as c
+    left join hr_emp_pay as d on d.mp_id = c.p_mth
+  on a.ps_p = c.p_id
+  left join hctinh.payrollemps as b on a.ps_p = b.p_id
+order by a.ps_id;
+
+select * from hctinh.payrollamts;

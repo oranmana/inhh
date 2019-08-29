@@ -58,16 +58,16 @@ return [
 
         'mysql2' => [
             'driver' => 'mysql',
-            'host' => env('DB_HOST', 'in.hanwha.co.th'),
-            'port' => env('DB_PORT', '3306'),
+            'host' => env('DB_HOST', '127.0.0.1'),
+            'port' => env('DB_PORT', '3307'),
             'database' => env('DB_DATABASE', 'admin_hctdb'),    // สำรอง
             'username' => env('DB_USERNAME', 'admin_root'),
-            'password' => env('DB_PASSWORD', 'hct536210'),
+            'password' => env('DB_PASSWORD', '2185'),
             'unix_socket' => env('DB_SOCKET', ''),
             'charset' => 'utf8',
             'collation' => 'utf8_unicode_ci',
             'prefix' => '',
-            'strict' => true,
+            'strict' => true, 
             'engine' => null,
         ],
 

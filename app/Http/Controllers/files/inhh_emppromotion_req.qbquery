@@ -1,0 +1,25 @@
+﻿insert into EmpPromotions
+select 0, 0, empid,
+  min(pro.indate) as indate,
+  max(ifnull(pro.xdate, if(emps.qcode, emps.qdate, date(now())))) as xdate, 0 as qon,
+  pro.cls as cls,
+  pro.posid as posid,
+  pro.orgid as orgid,
+  pro.jobid as jobid,
+  null as rem,
+  min(pro.id) as oid, 1 as CREATED_BY, NOW() AS CREATED_AT, 0 AS UPDATED_BY, now() as UPDATED_AT
+from EmpPromotions_bak as pro
+  left join emps on emps.id = empid
+group by empid desc,cls desc,posid desc,orgid desc,jobid desc
+order by empid, indate, xdate;
+
+select * from EmpPromotions;
+where xdate = date(now());
+
+-- version แรก --
+select empid, ifnull(emps.name,emps.nm) as name, count(*) as cnt, emps.qcode,
+  pro.posid, pro.cls, pro.orgid, pro.jobid, min(pro.indate) as efrom, max(pro.xdate) as eto
+from EmpPromotions as pro
+  left join emps on emps.id = empid
+group by 1 desc,5 desc,6 desc,7 desc,8 desc
+order by empid, 9,10;

@@ -1,0 +1,66 @@
+﻿drop table hctinh.EmpPromotions;
+
+create table hctinh.EmpPromotions;
+insert into hctinh.EmpPromotions
+select
+  0 as id,
+  0 as docid,
+  em_emp as empid,
+  em_date as indate,
+  em_xdate as xdate,
+  em_on as `on`,
+  em_cls as cls,
+  em_pos as posid,
+  em_org as orgid,
+  em_job as jobid,
+  null as rem,
+  em_id as oid,
+  5 AS CREATED_BY,
+  concat(em_date,' ','08:30:00') as CREATED_AT,
+  5 AS UPDATED_BY,
+  concat(em_date,' ','08:30:00') as UPDATED_AT
+from tbemployees
+order by em_date, em_emp;
+where em_id = 0;
+
+alter table hctinh.EmpPromotions
+modify column id int unsigned auto_increment primary key;
+
+drop table hctinh.EmpPayItems;
+create table hctinh.EmpPayItems;
+insert into hctinh.EmpPayItems
+select
+  em_id as id,
+  0 as docid,
+  em_emp as empid,
+  em_date as indate,
+  em_xdate as xdate,
+  em_on as `on`,
+  em_pay as pay,
+  py_wage as wage,
+  if(emp_cm>553,py_live,0) as cls,
+  if(emp_cm<3186,py_pos,0) as pos,
+  if(emp_cm<3186,0,py_pos) as job,
+
+  if(emp_cm>553,0,py_live) as live,
+  py_edu as edu,
+
+  py_trans as trans,
+  py_house as house,
+  py_food as food,
+
+  if(em_rem="DG",py_oth, 0) as prof,
+  if(em_rem="Mobile",py_oth, 0) as comm,
+  if(em_rem="Off.Move",py_oth, 0) as omove,
+  em_rem as rem,
+  em_id as oid,
+  5 AS CREATED_BY,
+  concat(em_date,' ','08:30:00') as CREATED_AT,
+  5 AS UPDATED_BY,
+  concat(em_date,' ','08:30:00') as UPDATED_AT
+from tbemployees
+  left join tbemployee on em_emp = emp_id;
+where em_id = 0;
+
+alter table hctinh.EmpPayItems
+modify column id int unsigned auto_increment primary key;

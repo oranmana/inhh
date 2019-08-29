@@ -1,0 +1,24 @@
+﻿drop table if exists hctinh.hrlvrqs;
+
+create table hctinh.hrlvrqs (
+id int unsigned auto_increment primary key,
+empid int unsigned default 0,
+lvid int unsigned default 0,
+fdate date default null,
+num tinyint unsigned default 0,
+rem text CHARACTER SET UTF8,
+trref int unsigned default 0,
+CREATED_BY int unsigned default 0,
+CREATED_AT datetime default null,
+UPDATED_BY int unsigned default 0,
+UPDATED_AT timestamp,
+lv_id int unsigned default 0,
+index lv_id (lv_id),
+index empid (empid),
+index lvid (lvid)
+);
+
+insert into hctinh.hrlvrqs
+select 0, lv_emp, lv_type, lv_fdate, lv_day, lv_rem, lv_ref, lv_by, lv_at, 5, now(), lv_id
+from hctdb.hr_leave
+order by lv_at, lv_id;

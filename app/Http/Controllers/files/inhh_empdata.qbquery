@@ -1,0 +1,32 @@
+﻿drop table hctinh.empsdata;
+
+create table hctinh.empsdata
+select ed_id as id,
+  1 as grp,
+  ed_emp as emp,
+  ed_level as code,
+  ed_inst as ref,
+  ed_year as yr,
+  ed_instt as name,
+  ed_rem as rem,
+  ed_place as loc,
+  ed_grd as grd,
+  now() as idate,
+  1 as state,
+  now() as create_at,
+  ed_id as oid
+from hctdb.hr_emp_edu
+where ed_level
+order by ed_id;
+
+alter table hctinh.empsdata add primary key id (id);
+
+insert into hctinh.empdata (grp,emp,ref,grd,idate,name,rem,loc,oid)
+select 2 as grp, trs_emp as emp, trs_tr as ref, trs_hr as grd, trs_date as idate, trs_fee as name, trs_exp as rem, trs_lv as loc, trs_id as oid
+from hctdb.hr_emp_train;
+
+-- 
+insert into hctinh.empdata (grp,emp,ref,idate,state,oid)
+select 3 as grp, j_emp as emp, j_job as ref, j_date as idate, j_status as state, j_id as oid
+from hctdb.hr_emp_job
+limit 0,5;

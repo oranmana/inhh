@@ -1,0 +1,44 @@
+﻿drop table if exists hctinh.hrattns;
+
+create table hctinh.hrattns (
+id int unsigned default 0 primary key,
+wkid int unsigned default 0,
+hl tinyint unsigned default 0,
+w1 double(5,2) unsigned default 0,
+w2 double(5,2) unsigned default 0,
+lm11 tinyint unsigned default 0,
+lm12 tinyint unsigned default 0,
+lm21 tinyint unsigned default 0,
+lm22 tinyint unsigned default 0,
+lh1 double(5,2) unsigned default 0,
+lh2 double(5,2) unsigned default 0,
+oh1 double(5,2) unsigned default 0,
+oh2 double(5,2) unsigned default 0,
+oh3 double(5,2) unsigned default 0,
+lvid int unsigned default 0,
+lvd double(5,2) unsigned default 0,
+lvh double(5,2) unsigned default 0,
+oth10 double(5,2) unsigned default 0,
+oth15 double(5,2) unsigned default 0,
+oth20 double(5,2) unsigned default 0,
+oth30 double(5,2) unsigned default 0,
+lvamt double(7,2) unsigned default 0,
+otamt double(7,2) unsigned default 0,
+ltamt double(7,2) unsigned default 0,
+CREATED_BY int unsigned default 0,
+CREATED_AT datetime default null,
+UPDATED_BY int unsigned default 0,
+UPDATED_AT timestamp,
+at_id int unsigned default 0,
+index wkid (wkid),
+index at_id (at_id)
+);
+
+insert into hctinh.hrattns
+select b.w_id, if(wk=0,nwk,wk), hl, w1, w2, l1,l2,l3,l4,t1,t2,o1,o2,o3,
+  lvc,lv,lvhr,ot10,ot15,ot20,ot30,lvamt,otamt,ltamt,
+  if(at_date > 20150630, 217, if(at_date > 20100531, 141, 5)), now(),
+  if(at_date > 20150630, 217, if(at_date > 20100531, 141, 5)), now(), atid
+from hr_attns as a
+  left join hctinh.hrworks as b on atid = at_id
+order by atid desc;

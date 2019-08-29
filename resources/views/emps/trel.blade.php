@@ -23,3 +23,6 @@
   @endforeach
   </tbody>
 </table>
+@can('isHR')
+<div><a>Add</a></div>
+@endcan

@@ -1,0 +1,34 @@
+﻿drop table hctinh.training;
+create table hctinh.training (
+id int unsigned auto_increment primary key,
+code varchar(10) default null,
+category_id int unsigned default 0,
+inside boolean default true,
+ondate datetime default null,
+todate datetime default null,
+hours double(5,2) unsigned default 0,
+organize_id int unsigned default 0,
+coursename varchar(256) character set utf8,
+place tinytext charset utf8,
+remark tinytext charset utf8,
+amt_fees double(9,2) default 0,
+amt_expenses double(9,2) default 0,
+state tinyint unsigned default 0,
+CREATED_BY int unsigned default 0,
+CREATED_AT datetime default null,
+UPDATED_BY int unsigned default 0,
+UPDATED_AT timestamp,
+index category_id (category_id),
+index organize_id (organize_id)
+);
+
+insert into hctinh.training
+select tr_id as id, upper(tr_code) as code, tr_cm as category, (tr_in=1) as inside,
+  tr_date as ondate, tr_tdate as todate, tr_day as hours,
+  0 as orgid, tr_course as course, tr_loc as place, tr_rem as rem,
+  tr_fee as amt_fees, tr_exp as amt_expenses, tr_status as state,
+  if (tr_date > 20171001, 238, 5), now(),
+  if (tr_date > 20171001, 238, 5), now()
+from hctdb.hr_train
+order by tr_id;
+

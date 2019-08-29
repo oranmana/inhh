@@ -1,0 +1,27 @@
+﻿drop table hctinh.commons;
+
+create table hctinh.commons
+select c_id as id,
+  c_parent as parid,
+  c_main as main,
+  c_num as num,
+  c_code as code,
+  c_name as name,
+  c_tname as tname,
+  c_des as des,
+  c_sub as sub,
+  c_type as 'type',
+  c_group as 'group',
+  c_cat as cat,
+  c_ref as ref,
+  c_off as off,
+  c_dir as dir,
+  com_gl as gl,
+  com_sfx as sfx,
+  c_node as node,
+  c_pj as pj,
+  c_erp as erp
+from hctdb.tbcommon
+order by c_id;
+
+alter table hctinh.commons add primary key id (id);

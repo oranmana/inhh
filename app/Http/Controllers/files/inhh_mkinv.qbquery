@@ -1,0 +1,122 @@
+﻿select * from hctdb.mk_inv
+order by inv_id desc
+limit 0,50;
+
+drop table hctinh.mkinvoices;
+
+create table hctinh.mkinvoices;
+insert into hctinh.mkinvoices
+select inv_id as id,
+version as version,
+inv_crd as creditid,
+inv_pj as pj,
+inv_dom as dom,
+inv_num as invnum,
+inv_so as sonum,
+inv_ref as ponum,
+inv_bl as blnum,
+
+inv_date as invdate,
+inv_ldate as loaddate,
+inv_bdate as bldate,
+
+inv_usd as currencyid,
+inv_sc as paytermid,
+inv_term as pricetermid,
+inv_pt as pointid,
+inv_book as bookid,
+
+inv_amt as amt,
+inv_fob as fobamt,
+inv_frt as freightamt,
+inv_ins as insureamt,
+
+inv_brk as brokerid,
+inv_brkd as brokerdate,
+
+inv_lcl as qlcl,
+inv_20 as q20,
+inv_20h as q20h,
+inv_40 as q40,
+inv_40h as q40h,
+
+inv_qty as quantity,
+inv_cnet as netweight,
+inv_cgross as grossweight,
+
+inv_bill as billnum,
+inv_mem as memo,
+inv_status as state,
+
+crby as CREATED_BY,
+crat as CREATED_AT,
+0 as UPDATED_BY,
+0 AS UPDATED_AT
+
+from hctdb.mk_inv
+where inv_bdate is not null
+order by inv_bdate, inv_num, inv_id;
+;
+alter table hctinh.mkinvoices
+modify column id int unsigned auto_increment primary key,
+modify UPDATED_BY timestamp;
+
+CREATE TABLE hctinh.mkcustoms;
+insert into hctinh.mkcustoms
+select 0 as id,
+inv_id as invid,
+inv_cus as exporttype,
+inv_ctax as refundcode,
+inv_cusport as exportportid,
+inv_cusnum as exportnum,
+inv_custxd as entrydate,
+inv_cuschk as date03,
+inv_cusdate as date04,
+inv_exc as exportrate,
+inv_exctr as paymentrate,
+inv_ctax as taxrefundcode,
+crby as CREATED_BY,
+crat as CREATED_AT,
+0 as UPDATED_BY,
+0 AS UPDATED_AT
+from hctdb.mk_inv
+where inv_cus > 0
+order by inv_bdate, inv_num, inv_id;
+;
+where inv_id = 0;
+
+alter table hctinh.mkcustoms
+modify column id int unsigned auto_increment primary key;
+
+drop table hctinh.mkvat;
+create table hctinh.mkvat;
+insert into hctinh.mkvat
+select 0 as id,
+inv_id as invid,
+inv_bdate as invdate,
+inv_dir as customerid,
+inv_grp as grp,
+inv_cat as cat,
+inv_thb as thb,
+inv_vat as vat,
+tmp_dn as dnid,
+inv_rcp as receiptid,
+inv_rem as remark,
+crby as CREATED_BY,
+crat as CREATED_AT,
+0 as UPDATED_BY,
+0 AS UPDATED_AT
+from hctdb.mk_inv
+where inv_dom = 3
+order by inv_bdate;
+where inv_id = 0;
+
+
+alter table hctinh.mkvat
+modify column id int unsigned auto_increment primary key;
+
+
+select * from hctdb.mk_inv where inv_bdate < now()
+and inv_cusport > 0
+order by inv_bdate desc
+limit 0,50;

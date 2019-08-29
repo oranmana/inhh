@@ -23,6 +23,19 @@ class Leave extends Model
     public function getIsTrainingAttribute() {
         return ($this->par == 9192 ? 1 : 0);
     }
+    public function getConsecutiveAttribute() {
+        return $this->gl;
+    }
+
+    public function getDaysPaidAttribute() {
+        return $this->dir;
+    }
+    public function getDaysLimitAttribute() {
+        return $this->sub;
+    }
+    public function getDaysNoticeAttribute() {
+        return ($this->des > "" ? $this->des * 1 : 0);
+    }
     public function getReasonedAttribute() {
         $reasons = array(
             3685 => 'ธุระเรื่องอะไร/ที่ใด',

@@ -19,7 +19,7 @@
     <td>{{ $emp->pos->code ?? '' }}</td>
     <td>{{ $emp->name }}</td>
     <td>{{ $emp->curjob->name }}</td>
-    <td>{{ edate($promotion->indate) }}</td>
+    <td>{{ empty($promotion->indate) ? '-' : edate($promotion->indate) }}</td>
   </tr>
   @endforeach
 @endif

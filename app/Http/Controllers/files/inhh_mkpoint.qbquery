@@ -1,0 +1,28 @@
+﻿select * from hctdb.mk_point;
+limit 0,20;
+
+CREATE table hctinh.mkpoint;
+insert into hctinh.mkpoint
+select
+px_id as id,
+px_dc as dom,
+px_code as code,
+px_dir as dirid,
+px_port as portid,
+px_city as cityid,
+px_zone as zoneid,
+pf_prterm as pricetermid,
+pf_pyterm as paymentid,
+pz_gp,
+pz_usr as CREATED_BY,
+lastc as CREATED_AT,
+pz_usr as UPDATED_BY,
+lastc as UPDATED_AT,
+px_pt
+from hctdb.mk_point
+order by px_id;
+where px_id = 0;
+
+alter table hctinh.mkpoint
+modify column id int unsigned auto_increment primary key,
+modify column UPDATED_AT timestamp;

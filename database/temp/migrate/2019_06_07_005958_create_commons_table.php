@@ -13,10 +13,14 @@ class CreateCommonsTable extends Migration
      */
     public function up()
     {
-        Schema::dropIfExists('commons_bak');
-        Schema::rename('commons', 'commons_bak');
-
-        Schema::create('commons', function (Blueprint $table) {
+        $TableName = 'commons';
+        $date = date('Ymd');
+        $BackUpName = $TableName . '_' . $date;
+        if (Schema::hasTable($TableName)) {
+            Schema::dropIfExists($BackUpName);
+            Schema::rename($TableName, $BackUpName);
+        }
+        Schema::create($TableName, function (Blueprint $table) {
             $table->smallIncrements('id');
             $table->unsignedSmallInteger('par');
             $table->unsignedSmallInteger('main');
@@ -38,8 +42,9 @@ class CreateCommonsTable extends Migration
             $table->unsignedSmallInteger('pj');
             $table->string('erp',15)->nullable();
             $table->unsignedSmallInteger('CREATED_BY');
+            $table->datetime('CREATED_AT');
             $table->unsignedSmallInteger('UPDATED_BY');
-            $table->timestamps();
+            $table->timestamp('UPDATED_AT');
         });
     }
 

@@ -1,0 +1,15 @@
+﻿insert into EmpPayItems
+select 0,0,i.empid,
+  min(i.indate) as idate,
+  max(ifnull(i.xdate,if(emp.qcode, emp.qdate, date(now())))) as xdate, 0, if(i.wage < 2000, 1, 0),
+  i.wage, i.cls, i.pos, i.job, i.live, i.edu, i.trans, i.house, i.food, i.prof, i.comm, i.onmove, i.rem,
+  min(oid), 1, now(), 1, now()
+from EmpPayItems_bak as i
+  left join emps as emp on emp.id = empid
+where emp.id
+group by i.empid, i.wage, i.cls, i.pos, i.job, i.live, i.edu, i.trans, i.house, i.food, i.prof, i.comm, i.onmove, i.rem
+order by empid, idate;
+
+create table EmpPayItems like EmpPayItems_bak;
+
+select * from EmpPayItems_bak limit 0,20;

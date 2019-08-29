@@ -1,0 +1,39 @@
+﻿drop table hctinh.payrollemps;
+
+create table hctinh.payrollemps (
+id int unsigned auto_increment primary key,
+payroll_id int unsigned default 0,
+emp_id int unsigned default 0,
+rate_id int unsigned default 0,
+org_id int unsigned default 0,
+pos_id int unsigned default 0,
+fullwork tinyint unsigned default 0,
+erp_cc varchar(10) default null,
+erp_ba varchar(4) default null,
+CREATED_BY int unsigned default 0,
+CREATED_AT datetime,
+UPDATED_BY int unsigned default 0,
+UPDATED_AT timestamp,
+p_id int unsigned default 0,
+index payroll_id (payroll_id),
+index emp_id (emp_id),
+index rate_id (rate_id),
+index org_id (org_id),
+index pos_id (pos_id),
+index p_id (p_id)
+);
+
+insert into hctinh.payrollemps
+select 0 as id, pr.id as payroll_id, p_emp as emp_id, p_pay as rate_id, p_org as org_id, p_pos as pos_id,
+  if (intel > 0, 1, 0) as fullwork,
+  cm.c_erp as erp_cc, p_ba as erp_ba,
+  mp_by as CREATED_BY, mp_date as CREATED_AT,
+  mp_by as UPDATED_BY, now() as UPDATED_AT,
+  p_id
+from hctdb.hr_emps_pay as mp
+  left join hctdb.hr_emp_pay as emppay on emppay.mp_id = p_mth
+  left join hctinh.payrolls as pr on  pr.mp_id = p_mth
+  left join hctdb.tbcommon as cm on cm.c_id = p_cc
+  left join (select ps_p, sum(ps_amt) as intel from hr_emps_pays where ps_exp = 3798 group by ps_p) as ps on ps_p = p_id
+order by p_id;
+

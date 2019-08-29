@@ -1,0 +1,8 @@
+﻿create table hctinh.sap_item
+select * from hctdb.sap_item
+where itm_id = 0;
+
+insert into hctinh.sap_item
+select * from hctdb.sap_item
+order by itm_id;
+

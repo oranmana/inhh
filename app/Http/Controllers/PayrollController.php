@@ -133,7 +133,7 @@ class PayrollController extends Controller
             foreach($items as $item) {
                 $iamt = ItemAmount($item);
                 if ( $iamt->amt ) {
-                    $payitem = new PayrollItem;
+                    $payitem = new PayrollAmt;
                     $payitem->payemp_id = $PayEmp->id;
                     $payitem->plus = ($amt > 0 ? 1 : -1);
                     $payitem->item_id = $iamt->itemcode;
@@ -145,8 +145,8 @@ class PayrollController extends Controller
                     $payitem->save();
                 }
             }
-            if ($sum->otamt) {
-                PayrollItem::insert(['payemp_id'=>$PayEmp->id, 'plus'=>1, 'item_id'=>0]);
+            if ($sum->otamt > 0) {
+                PayrollAmt::insert(['payemp_id'=>$PayEmp->id, 'plus'=>1, 'item_id'=>3804, 'amount'=>$sum->otamt]);
             }
         }
     }

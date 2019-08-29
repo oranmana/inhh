@@ -1,0 +1,18 @@
+﻿drop table hctinh.hrtimes;
+create table hctinh.hrtimes (
+t_id int unsigned auto_increment primary key,
+t_empcode varchar(10) default null,
+t_empid  int unsigned default 0,
+t_date date default null,
+t_time datetime default null,
+t_raw varchar(200) default null,
+index t_empid (t_empid),
+index t_empcode (t_empcode),
+index t_date (t_date) );
+
+insert into hctinh.hrtimes
+select 0, tr_emp, tm_id, tr_date, tr_trec, trim(tr_raw)
+from hctdb.hr_time
+where tr_date >= 20180101
+order by tr_trec,tr_id;
+

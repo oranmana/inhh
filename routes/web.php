@@ -24,11 +24,73 @@ Auth::routes();
 Route::get('/home', 'HomeController@index')->name('home'); 
 
 Route::group(array('before' => 'auth'), function() {
-    Route::group(array('before' => 'auth'), function() {
-        Route::resource('/{par}/commons', 'CommonsController')->middleware('can:isMaster');
+
+    Route::view('hr', 'hrmenu')->middleware('can:isHR');
+    // Calender
+    Route::get('calendars/{year?}', 'CalendarController@index');
+    Route::get('calendar/addholiday/{yr}/{calid?}', function($yr, $calid=0) {
+        return view('calendar.addholiday', compact('yr','calid'));
+    })->middleware('can:isHRTM');
+    Route::view('cal/pm', 'calendar.googlepm');    
+    // Calender //
+
+    // Organization
+    Route::get('orgs/{orgid?}','OrgController@index')->middleware('can:isHR');
+    
+    Route::get('org/remove/{orgid}','OrgController@remove')->middleware('can:isHRTM');
+    Route::get('org/addunder/{orgid}','OrgController@addunder')->middleware('can:isHRTM');
+    Route::get('org/move/{underid}/{orgid}','OrgController@moveunder')->middleware('can:isHRTM');
+    Route::get('org/rename/{orgid}','OrgController@rename')->middleware('can:isHRTM');
+    Route::get('org/add/{parid}', function($parid) {
+        return view('org.addorg', compact('parid') )->render();
+    })->middleware('can:isHRTM');
+    Route::post('org/addorg', 'OrgController@addunder')->middleware('can:isHRTM');
+    Route::post('org/relocate', 'OrgController@relocate')->middleware('can:isHRTM');
+    Route::post('org/remove', 'OrgController@relocate')->middleware('can:isHRTM');
+    Route::get('org/rename/{orgid}', function($orgid) {
+        $org = \App\Models\EmpOrganization::find($orgid);
+        return view('org.rename', compact('org') )->render();
+    })->middleware('can:isHRTM');
+    Route::post('org/rename', 'OrgController@rename')->middleware('can:isHRTM');
+    Route::get('org/profile/{orgid}', function($orgid) {
+        $org = \App\Models\EmpOrganization::find($orgid);
+        $parname = $org->parent->fullname;
+        return [$parname, view('org.profile', compact('parname','org') )->render()];
+    })->middleware('can:isHRTM');
+    // Organization //
+
+    //  Job Title
+    Route::view('jobs', 'jobs.jobtitle');
+    Route::get('jobs/view/{jobid?}', function($jobid) {
+        return view('jobs.jobprofile',compact('jobid'));
+    });
+    Route::get('jobs/{jobid?}','JobController@index');
+    Route::get('jobs/emp/{empid}','JobController@emplist');
+    Route::get('job/profile/{jobid}', function($jobid) {
+        $job = \App\Models\jobtitle::find($jobid);
+        $orgname = \App\Models\EmpOrganization::find($job->Org->id)->fullname;
+        $parname = $job->parent->name;
+        return [$parname, $orgname, view('jobs.profile', compact('job') )->render()];
+    });
+    Route::post('job/relocate', 'JobController@relocate')->middleware('can:isHRTM');
+    Route::get('job/add/{parid}', function($parid) {
+        return view('jobs.addjob', compact('parid') )->render();
+    })->middleware('can:isHRTM');
+    Route::post('job/add', 'JobController@addunder')->middleware('can:isHRTM');
+    Route::get('job/rename/{jobid}', function($jobid) {
+        return view('jobs.rename', compact('jobid') )->render();
+    })->middleware('can:isHRTM');
+    Route::post('job/rename', 'JobController@rename')->middleware('can:isHRTM');
+    //  Job Title   //
+
+
+
+    Route::resource('/{par}/commons', 'CommonsController')->middleware('can:isMaster');
         Route::get('/commons/{id}', 'CommonsController@readindex')->middleware('can:isMaster');
         Route::resource('commons', 'CommonsController')->middleware('can:isMaster');
-    Route::post('/hrrq/add','hrRequestController@addrq')->middleware('can:isHR');
+
+        
+        Route::post('/hrrq/add','hrRequestController@addrq')->middleware('can:isHR');
     Route::get('/hrrq/create','hrRequestController@create')->middleware('can:isHR');
     // Route::get('/hrrq/{yr?}/{open?}','hrRequestController@index');
     Route::get('/hrrq/{yr?}/{open?}','hrRequestController@index')->middleware('can:isHR');
@@ -39,11 +101,14 @@ Route::group(array('before' => 'auth'), function() {
     Route::get('/app/select','hrAppsController@selection')->middleware('can:isHRTM');
     Route::post('/app/selected','hrAppsController@saveselection')->middleware('can:isHR');
     Route::get('/interview/{dirid}','hrAppController@index')->middleware('can:isHR');
+
     Route::get('/hrcons','hrContractController@index')->middleware('can:isHR');
     Route::post('/hrcons/{yr?}/{type?}','hrContractController@index')->middleware('can:isHR');
     Route::get('/hrcon/{conid}','hrContractController@show')->middleware('can:isHR');
     Route::get('/hrcon/delete','hrContractController@show')->middleware('can:isHR');
+    //// ***** /////
     Route::get('job/{jobid}','hrRequestController@getjob')->middleware('can:isHR');
+
     Route::get('dir','DirsController@findtax')->middleware('can:isMaster');
 
     Route::resource('dirs', 'DirsController')->middleware('can:isMaster');
@@ -113,6 +178,12 @@ Route::group(array('before' => 'auth'), function() {
     Route::post('doc/upload','DocsController@upload');
     Route::get( 'docs/{mth?}/{orgid?}/{typeid?}' , 'DocsController@maindoc');
 
+    Route::view('leaveitem','leavemain.main')->middleware('can:isHRTM');
+    Route::get('leaveitem/edit/{lvid}', function($lvid) {
+        return view('leavemain.edit', ['lvid'=>$lvid]);
+    })->middleware('can:isHRTM');
+    Route::post('leaveitem/update','LeaveItemController@update');
+    
     Route::get('myleave/{yr?}/{empid?}/{type?}','myLeaveController@index');
     Route::get('myleave/list/{yr?}/{empid?}/{type?}',function($yr,$empid,$type) {
         return view('myLeave.myleaves', compact('yr','empid','type') );
@@ -204,56 +275,6 @@ Route::group(array('before' => 'auth'), function() {
     Route::get('assets/{item?}/{team?}/{pic?}/{state?}','AssetController@index');
     Route::get('asset/{assetid?}','AssetController@show');
 
-    Route::get('orgs/{orgid?}','OrgController@index')->middleware('can:isHR');
-    Route::get('org/remove/{orgid}','OrgController@remove')->middleware('can:isHRTM');
-    Route::get('org/addunder/{orgid}','OrgController@addunder')->middleware('can:isHRTM');
-    Route::get('org/move/{underid}/{orgid}','OrgController@moveunder')->middleware('can:isHRTM');
-    Route::get('org/rename/{orgid}','OrgController@rename')->middleware('can:isHRTM');
-    Route::get('org/add/{parid}', function($parid) {
-        return view('org.addorg', compact('parid') )->render();
-    })->middleware('can:isHRTM');
-    Route::post('org/addorg', 'OrgController@addunder')->middleware('can:isHRTM');
-    Route::post('org/relocate', 'OrgController@relocate')->middleware('can:isHRTM');
-    Route::post('org/remove', 'OrgController@relocate')->middleware('can:isHRTM');
-    Route::get('org/rename/{orgid}', function($orgid) {
-        $org = \App\Models\EmpOrganization::find($orgid);
-        return view('org.rename', compact('org') )->render();
-    })->middleware('can:isHRTM');
-    Route::post('org/rename', 'OrgController@rename')->middleware('can:isHRTM');
-    Route::get('org/profile/{orgid}', function($orgid) {
-        $org = \App\Models\EmpOrganization::find($orgid);
-        $parname = $org->parent->fullname;
-        return [$parname, view('org.profile', compact('parname','org') )->render()];
-    })->middleware('can:isHRTM');
-
-    Route::view('jobs', 'jobs.jobtitle');
-    Route::get('jobs/view/{jobid?}', function($jobid) {
-        return view('jobs.jobprofile',compact('jobid'));
-    });
-    Route::get('jobs/{jobid?}','JobController@index');
-    Route::get('jobs/emp/{empid}','JobController@emplist');
-    Route::get('job/profile/{jobid}', function($jobid) {
-        $job = \App\Models\jobtitle::find($jobid);
-        $orgname = \App\Models\EmpOrganization::find($job->Org->id)->fullname;
-        $parname = $job->parent->name;
-        return [$parname, $orgname, view('jobs.profile', compact('job') )->render()];
-    });
-    Route::post('job/relocate', 'JobController@relocate')->middleware('can:isHRTM');
-    Route::get('job/add/{parid}', function($parid) {
-        return view('jobs.addjob', compact('parid') )->render();
-    })->middleware('can:isHRTM');
-    Route::post('job/add', 'JobController@addunder')->middleware('can:isHRTM');
-    Route::get('job/rename/{jobid}', function($jobid) {
-        return view('jobs.rename', compact('jobid') )->render();
-    })->middleware('can:isHRTM');
-    Route::post('job/rename', 'JobController@rename')->middleware('can:isHRTM');
-    
-    Route::get('calendars/{year?}', 'CalendarController@index');
-    // Route::get('calendar/addholiday/{year}/{calid?}', 'CalendarController@edit')->middleware('can:isHRTM');
-    Route::get('calendar/addholiday/{yr}/{calid?}', function($yr, $calid=0) {
-        return view('calendar.addholiday', compact('yr','calid'));
-    })->middleware('can:isHRTM');
-    Route::post('calendar/addholiday/{year}', 'CalendarController@update')->middleware('can:isHRTM');
 
     Route::view('products','export.products.main');
     Route::get('products/{igroup?}/{itype?}', function($igroup=3151,$itype=99) {
@@ -324,6 +345,3 @@ Route::group(array('before' => 'auth'), function() {
     });
 });
 
-});
-
-Route::view('cal/pm', 'calendar.googlepm');

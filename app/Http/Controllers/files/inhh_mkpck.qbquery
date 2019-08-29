@@ -1,0 +1,44 @@
+﻿select * from hctdb.mk_pck
+order by p_id desc
+limit 0,200;
+
+select p_pj, count(*)
+from hctdb.mk_pck
+group by p_pj
+;
+
+create table hctinh.mkpackinglist;
+insert into hctinh.mkpackinglist
+select
+p_id as id,
+p_inv as invid,
+p_pd as sapitemid,
+p_uom as sizeid,
+p_q as packquantity,
+p_qty as salequantity,
+p_load as loadquantity,
+p_upr as unitprice,
+p_qty* p_upr as amount,
+p_frt as freightamount,
+p_ins as insureamount,
+p_net as netkgs,
+p_gross as grosskgs,
+p_sqm as sqm,
+
+p_cus as refunditem,
+
+0 AS CREATED_BY,
+NOW() AS CREATED_AT,
+0 AS UPDATED_BY,
+NOW() AS UPDATED_AT
+
+p_itm as xp_itm,
+p_pj as xp_pj,
+p_amt as xp_amt,
+
+from hctdb.mk_pck
+where p_inv > 0
+order by p_id;
+
+alter table hctinh.mkpackinglist
+modify column id int unsigned auto_increment primary key;

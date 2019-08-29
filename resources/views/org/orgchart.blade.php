@@ -11,7 +11,7 @@
   @php($empnum = $orgunit->emps()->isActive()->count() )
   <li >
     <span class="mark" >{!! ($childnum > 0 ? "▾" : "▹") !!}</span> 
-    <a class="org" draggable="true" data-id="{{ $orgunit->id }}"  {!! $childnum ? " child=" . $childnum : "" !!} {!! $empnum ? " empnum='" . $empnum . "'" : '' !!} {!!$orgunit->tname ? " title='" . $orgunit->tname . "'" : ''!!}>{!! $orgunit->name . ($orgunit->des ? ' ' . $orgunit->des : '') . ($empnum ? ' ('. $empnum . ')' : '' )  !!}</a>
+    <a class="org{{$childnum ? '' : ' nomember'}}" draggable="true" data-id="{{ $orgunit->id }}"  {!! $childnum ? " child=" . $childnum : "" !!} {!! $empnum ? " empnum='" . $empnum . "'" : '' !!} {!!$orgunit->tname ? " title='" . $orgunit->tname . "'" : ''!!}>{!! $orgunit->name . ($orgunit->des ? ' ' . $orgunit->des : '') . ($empnum ? ' ('. $empnum . ')' : '' )  !!}</a>
     @if($childnum > 0)
       @include("org.orgchart", ['orgpar'=>$orgunit,'level'=>$level])
     @endif

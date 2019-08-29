@@ -1,0 +1,67 @@
+﻿select * from hctdb.mk_book
+order by bk_id desc;
+limit 0,20;
+
+CREATE table hctinh.mkbooking;
+insert into hctinh.mkbooking
+select
+bk_id as id,
+bk_date as bookdate,
+bk_code as code,
+bk_agent as agentid,
+bk_pagent as agentpersonid,
+bk_liner as linerid,
+bk_lcl as qlcl,
+bk_20 as q20,
+bk_20h as q20h,
+bk_40 as q40,
+bk_40h as q40h,
+bk_vf as feederid,
+bk_yf as feedervoy,
+bk_etd as etddate,
+bk_vs as carrierid,
+bk_ys as carriervoy,
+bk_eta as etadate,
+bk_fport as portfromid,
+bk_tport as porttoid,
+
+bk_fdate as receivedate,
+bk_fdepo as receivedepoid,
+bk_fperson as receivepersonid,
+bk_frem as receivememo,
+bk_xfrom as receivefrom,
+bk_xfcontact as receiveperson,
+
+bk_tdate as returndate,
+bk_tdepo as returndepoid,
+bk_tperson as returntopersonid,
+bk_trem as returnmemo,
+bk_xto as returnto,
+bk_xtcontact as returnperson,
+
+bk_close as closetime,
+
+bk_frt as freightprice,
+bk_lcl as lclprice,
+bk_f20 as f20price,
+bk_f40 as f40price,
+bk_th20 as thc20price,
+bk_th40 as thc40price,
+bk_doc as docprice,
+
+bk_rem as remark,
+bk_status as state,
+
+
+bk_by as CREATED_BY,
+bk_date as CREATED_AT,
+bk_by as UPDATED_BY,
+bk_by as UPDATED_AT
+
+from hctdb.mk_book
+where bk_code is not null or bk_agent > 0
+order by bk_id;
+
+alter table hctinh.mkbooking
+modify column id int unsigned auto_increment primary key,
+modify column UPDATED_AT timestamp;

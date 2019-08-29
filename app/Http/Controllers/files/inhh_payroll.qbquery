@@ -1,0 +1,66 @@
+﻿drop table hctinh.payrolls;
+
+create table hctinh.payrolls (
+id int unsigned auto_increment primary key,
+mth varchar(6) default null,
+num tinyint unsigned default 0,
+grp_id int unsigned default 0,
+wagefor date default null,
+wageto date default null,
+wageonly boolean default false,
+otfor date default null,
+otto date default null,
+payon date default null,
+state tinyint unsigned default 0,
+erp_payby varchar(1) default 'T',
+erp_vendor varchar(8) default '8001228',
+erp_payroll double(11,2) default 0,
+CREATED_BY int unsigned default 0,
+CREATED_AT datetime,
+UPDATED_BY int unsigned default 0,
+UPDATED_AT timestamp,
+mp_id int unsigned default 0,
+index mp_id (mp_id),
+index grp_id (grp_id));
+
+insert into hctinh.payrolls
+select 0 as id, left(mp_code,6) as mth, right(mp_code,2)*1 as num,
+  if(mp_ecm>0, mp_ecm, elt(mp_cm,553,554,3186,9637) )*1 as grp_id,
+  ifnull(fwdate,wagefroms) as wagefor,
+  if(day(mp_pdate) >=14 and day(mp_pdate) <=16, date_sub(ifnull(twdate, wagetos),interval 15 day), ifnull(twdate, wagetos)) as wageto,
+  if(day(mp_pdate) >=14 and day(mp_pdate) <=16,1,0) as wageonly,
+  if(day(mp_pdate) >=14 and day(mp_pdate) <=16,null,ifnull(fodate,otfroms)) as otfor,
+  if(day(mp_pdate) >=14 and day(mp_pdate) <=16,null,ifnull(todate,ottos)) as otto,
+  mp_pdate as payon, mp_state as state,
+  mp_pmt as erp_payby, mp_vendor as erp_vendor, mp_amt as erp_payroll,
+  mp_by as CREATED_BY, mp_date as CREATED_AT,
+  mp_by as UPDATED_BY, now() as UPDATED_AT,
+  mp_id
+from hctdb.hr_emp_pay
+  left join (
+select mth, wf, max(wagefrom) as wagefroms, max(wageto) as wagetos, max(otfrom) as otfroms, max(otto) as ottos
+from (
+select at_ofw as mth, 0 as wf, min(cl_date) as wagefrom, max(cl_date) as wageto, null as otfrom, null as otto
+from hctdb.hr_cal
+where at_ofw is not null
+group by 1
+union
+select at_wfw as mth, 1 as wf, min(cl_date) as wagefrom, max(cl_date) as wageto, null as otfrom, null as otto
+from hctdb.hr_cal
+where at_wfw is not null
+group by 1
+union
+select at_ofa as mth, 0 as wf, null as wagefrom, null as wageto, min(cl_date) as otfrom, max(cl_date) as otto
+from hctdb.hr_cal
+where at_ofa is not null
+group by 1
+union
+select at_wfa as mth, 1 as wf, null as wagefrom, null as wageto, min(cl_date) as otfrom, max(cl_date) as otto
+from hctdb.hr_cal
+where at_wfa is not null
+group by 1) as a
+group by mth,wf
+  ) as cal on left(mp_code,6) = mth and wf = if(mp_cm > 2,1,0)
+order by mp_code;
+
+

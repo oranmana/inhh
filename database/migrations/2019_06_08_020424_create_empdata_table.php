@@ -13,13 +13,19 @@ class CreateEmpdataTable extends Migration
      */
     public function up()
     {
-        Schema::dropIfExists('empdata_bak');
-        Schema::rename('empdata', 'empdata_bak');
+        $TableName = 'empsdata';
+        $date = date('Ymd');
+        $BackUpName = $TableName . '_' . $date;
+        
+        if (Schema::hasTable($TableName)) {
+            Schema::dropIfExists($BackUpName);
+            Schema::rename($TableName, $BackUpName);
+        }
 
-        Schema::create('empdata', function (Blueprint $table) {
-            $table->smallIncrements('id');
-            $table->unsignedTinyInteger('grp');  // Type of data : relatives, education
-            $table->unsignedSmallInteger('docid');
+        Schema::create($TableName, function (Blueprint $table) {
+            $table->increments('id');
+            $table->unsignedTinyInteger('grp');  // Type of data : 1-education, ?-relatives, ?-training
+            $table->unsignedSmallInteger('empid');
             $table->unsignedSmallInteger('code');
             $table->unsignedSmallInteger('ref');
             $table->unsignedSmallInteger('yr');
@@ -28,12 +34,13 @@ class CreateEmpdataTable extends Migration
             $table->string('loc')->nullable();
             $table->unsignedDecimal('grd', 8, 2);
             $table->unsignedTinyInteger('state');
-            $table->unsignedSmallInteger('oid');
 
             $table->unsignedSmallInteger('CREATED_BY');
+            $table->datetime('CREATED_AT');
             $table->unsignedSmallInteger('UPDATED_BY');
-            $table->timestamps();
+            $table->timestamp('UPDATED_AT');
 
+            $table->unsignedSmallInteger('oid');
         });
     }
 
@@ -44,6 +51,6 @@ class CreateEmpdataTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('empdata');
+        Schema::dropIfExists('empsdata');
     }
 }
